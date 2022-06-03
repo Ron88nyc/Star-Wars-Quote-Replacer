@@ -26,28 +26,76 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })             
     app.use(bodyParser.json())
 
 
-    app.get('/', (req, res) => {
-        quotesCollection.find().toArray()
-            .then(results => {
-                // console.log(results)
-                res.render('index.ejs',{quotes: results})
-            })
-            .catch(error => console.error(error))
-      })
-      app.post('/quotes', (req, res) => {
-        quotesCollection.insertOne(req.body)
-            .then(result => {
-                console.log(result)
-                res.redirect('/')
-            })
-            .catch(error => console.error(error))
-      })
+  //   app.get('/', (req, res) => {
+  //       quotesCollection.find().toArray()
+  //           .then(results => {
+  //               // console.log(results)
+  //               res.render('index.ejs',{quotes: results})
+  //           })
+  //           .catch(error => console.error(error))
+  //     })
+  //     app.post('/quotes', (req, res) => {
+  //       quotesCollection.insertOne(req.body)
+  //           .then(result => {
+  //               console.log(result)
+  //               res.redirect('/')
+  //           })
+  //           .catch(error => console.error(error))
+  //     })
     
 
-  app.put('/quotes', (req, res) => {
+  // app.put('/quotes', (req, res) => {
     
+  //   quotesCollection.findOneAndUpdate(
+  //     {name: 'Yoda'},
+  //     {
+  //       $set: {
+  //         name: req.body.name,
+  //         quote: req.body.quote
+  //       }
+  //     },
+  //     {
+  //       upsert: true
+  //     }
+  //   )
+  //   .then(result => {
+  //     console.log(result)
+  //     res,json('success')
+  //   })
+  //   .catch(error => console.error(error))
+  // })
+  // app.delete('/quotes', (req, res) => {
+  //   quotesCollection.deleteOne(
+  //     { name: req.body.name }
+  //   )
+  //     .then(result => {
+  //       if (result.deletedCount === 0) {
+  //         return res.json('No quote to delete')
+  //       }
+  //       res.json("Deleted Darth Vadar's quote")
+  //     })
+  //     .catch(error => console.error(error))
+  //     })
+
+  app.get('/', (req, res) => {
+    db.collection('quotes').find().toArray()
+      .then(quotes => {
+        res.render('index.ejs', { quotes: quotes })
+      })
+      .catch(/* ... */)
+  })
+
+  app.post('/quotes', (req, res) => {
+    quotesCollection.insertOne(req.body)
+      .then(result => {
+        res.redirect('/')
+      })
+      .catch(error => console.error(error))
+  })
+
+  app.put('/quotes', (req, res) => {
     quotesCollection.findOneAndUpdate(
-      {name: 'Yoda'},
+      { name: 'Yoda' },
       {
         $set: {
           name: req.body.name,
@@ -58,12 +106,10 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })             
         upsert: true
       }
     )
-    .then(result => {
-      console.log(result)
-      res,json('success')
-    })
-    .catch(error => console.error(error))
+      .then(result => res.json('Success'))
+      .catch(error => console.error(error))
   })
+
   app.delete('/quotes', (req, res) => {
     quotesCollection.deleteOne(
       { name: req.body.name }
@@ -72,10 +118,13 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })             
         if (result.deletedCount === 0) {
           return res.json('No quote to delete')
         }
-        res.json("Deleted Darth Vadar's quote")
+        res.json('Deleted Darth Vadar\'s quote')
       })
       .catch(error => console.error(error))
-      })
+  })
+
+
+
   app.listen(3000, function() {
     console.log('listening on 3000')
 })
